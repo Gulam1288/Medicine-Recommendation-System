@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Recommendation System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://ak.picdn.net/shutterstock/videos/1018722751/thumb/1.jpg?ip=x480');
+            color: #333;
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+        }
+
+        .title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #89CFF0;
+            /* Blue title color */
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .description {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .feature {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #1b0a58;
+            width: 25rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            /* Initially hidden */
+            transform: translateY(20px);
+            /* Initial position below */
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+        }
+
+        .bg-image {
+            background-image: url('https://c4.wallpaperflare.com/wallpaper/834/905/121/net-neuron-connection-wallpaper-preview.jpg');
+            background-size: cover;
+            background-position: center;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            /* Behind other content */
+            animation: animateBackground 40s linear infinite;
+            /* Background animation */
+        }
+
+        @keyframes animateBackground {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .light,
+        .lead {
+            color: #FFF;
+            font-weight: 500;
+        }
+
+        .btn-warning {
+            font-weight: 500;
+        }
+
+        .wrap {
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+        }
+
+        .feature img {
+            width: 100%;
+            height: 15rem;
+            object-fit: cover;
+        }
+
+        .footer {
+            margin-top: 80px;
+            width: 100%;
+            background: #1A1A1A;
+        }
+
+        .flexing {
+            display: flex;
+            margin-bottom: 8rem;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 768px) {
+            .flexing {
+                flex-direction: column;
+            }
+
+            .feature {
+                width: 100%;
+            }
+        }
+
+        .ext {
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="bg-image"></div>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body text-light" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">KUCET</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/prescription">Prescription</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="wrap">
+        <div class="container pt-5 light text-center animate__animated animate__fadeInLeft">
+            <h1 class="title">Welcome to Medicine Recommendation System</h1>
+            <p class="lead subtitle">Enhancing Healthcare with Personalized Medicine Suggestions</p>
+        </div>
+
+        <div class="container light mt-5">
+            <div class="row">
+                <div class="col-md-6 animate__animated animate__fadeInDown">
+                    <h2>How It Works</h2>
+                    <p>Our system analyzes symptoms provided by users and suggests tailored medication options, improving decision-making and patient outcomes.</p>
+                </div>
+                <div class="col-md-6 animate__animated animate__fadeInUp">
+                    <h2>Benefits</h2>
+                    <ul>
+                        <li>Receive personalized medicine suggestions based on symptoms</li>
+                        <li>Enhanced decision-making for healthcare professionals</li>
+                        <li>Improved patient care and treatment outcomes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container light mt-5">
+            <div class="row">
+                <div class="col-md-6 animate__animated animate__fadeInDown">
+                    <h2>Get Started</h2>
+                    <p>Interested in trying out our medicine recommendation system? Sign up to receive early access!</p>
+                    <a href="/register" class="btn btn-warning btn-lg">Sign Up</a>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5 text-light">
+            <div class="row">
+                <div class="col-md-6 mb-4 ext animate__animated animate__fadeInUp">
+                    <h2>Our Approach</h2>
+                    <p class="description">
+                        We combine machine learning algorithms, natural language processing (NLP), and medical expertise to develop a robust system for recommending medicines based on symptoms.
+                    </p>
+                </div>
+                <div class="col-md-6 mb-4 ext animate__animated animate__fadeInUp">
+                    <h2>Data Privacy</h2>
+                    <p class="description">
+                        Ensuring patient confidentiality and data security is our top priority. We adhere to strict privacy policies and use anonymized data for training our models.
+                    </p>
+                </div>
+                <div class="col-md-6 mb-4 ext animate__animated animate__fadeInUp">
+                    <h2>Collaborations</h2>
+                    <p class="description">
+                        We collaborate with healthcare professionals, researchers, and institutions to continually improve our system's accuracy and applicability in real-world scenarios.
+                    </p>
+                </div>
+                <div class="col-md-6 mb-4 ext animate__animated animate__fadeInUp">
+                    <h2>User Feedback</h2>
+                    <p class="description">
+                        We value user feedback and continuously refine our system based on user experiences and suggestions. Your input drives our innovation.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5 flexing">
+            <section class="feature bg-dark text-light animate__animated animate__fadeInDown">
+                <h2>Importance of Personalized Medicine</h2>
+                <p class="description">
+                    Personalized medicine revolutionizes treatment by tailoring options to individuals, enhancing healthcare and patient outcomes. Our tool leverages data-driven recommendations, playing a pivotal role in advancing this evolution within healthcare delivery.                <img src="{{ url_for('static', filename='heart.jpg') }}" alt="Healthcare" class="img-fluid mt-3">
+            </section>
+
+            <section class="feature bg-dark text-light animate__animated animate__fadeInDown">
+                <h2>Advancements in Healthcare</h2>
+                <p class="description">
+                    Integrating machine learning and natural language processing in healthcare leads to efficient diagnosis and treatment, revolutionizing patient care standards. Our project contributes to this advancement by facilitating accurate and swift medication recommendations.
+                </p>
+                <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8ZnV0dXJlLG1lZGljYWx8fHx8fHwxNzEzMzU1NTE2&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=800" alt="Future Technology" class="img-fluid mt-3">
+            </section>
+
+            <section class="feature bg-dark text-light animate__animated animate__fadeInDown">
+                <h2>Future Roadmap</h2>
+                <p class="description">
+                    Join us in shaping the future of personalized medicine with our state-of-the-art recommendation system. Utilizing cutting-edge technologies, we deliver real-time insights and seamless user experiences, revolutionizing personalized healthcare delivery and advancing patient outcomes.                </p>
+                <img src="{{ url_for('static', filename='neuron.jpg') }}" alt="Medical Technology" class="img-fluid mt-3">
+            </section>
+        </div>
+        <div class="container light mt-5">
+            <div class="row">
+                <div class="col-md-12 animate__animated animate__fadeInUp">
+                    <h2>Understanding Personalized Medicine</h2>
+                    <p class="description">
+                        Learn about the concept of <a rel="noopener" class="text-success link-offset-3" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6095726/" target="_blank">personalized medicine</a> and how it is transforming healthcare by tailoring treatment options to individual patients based on their unique characteristics and needs.
+                    </p>
+                    <h2 class="mt-5">Machine Learning in Healthcare</h2>
+                    <p class="description">
+                        Discover how <a rel="noopener" class="text-success link-offset-3" href="https://www.ibm.com/watson/health/ai-in-healthcare/" target="_blank">machine learning algorithms</a> are revolutionizing diagnosis, drug discovery, and patient care in the medical field, leading to more efficient and accurate healthcare solutions.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid text-light py-5">
+            <div class="container" data-bs-theme="dark">
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <i class="fas fa-dna text-danger fa-4x text-center mt-4"></i>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Precision Medicine</h5>
+                                <p class="card-text">Discover how precision medicine tailors treatments to individual patients based on genetic, environmental, and lifestyle factors.</p>
+                                <a rel="noopener" href="https://www.cancer.gov/about-cancer/treatment/types/precision-medicine" class="btn btn-secondary" target="_blank">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <i class="fas fa-hospital-alt text-info fa-4x text-center mt-4"></i>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Future of Healthcare</h5>
+                                <p class="card-text">Explore how advancements in AI and machine learning are shaping the future of healthcare delivery and personalized treatment.</p>
+                                <a rel="noopener" href="https://www.who.int/health-topics/precision-medicine" class="btn btn-secondary" target="_blank">Discover Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <i class="fas fa-user-md fa-4x text-success text-center mt-4"></i>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Patient-Centered Care</h5>
+                                <p class="card-text">Learn how personalized medicine improves patient outcomes and enhances the quality of healthcare delivery.</p>
+                                <a rel="noopener" href="https://www.mayoclinic.org/precision-medicine" class="btn btn-secondary" target="_blank">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid footer text-light py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2>Our Vision</h2>
+                        <p>
+                            Empowering healthcare professionals with cutting-edge technology to revolutionize personalized medicine and enhance patient care globally.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>Contact Us</h2>
+                        <p>Have questions or feedback? Feel free to reach out to us!</p>
+                        <a href="mailto:info@example.com" class="btn btn-info">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // GSAP animations triggered when elements enter viewport
+        $(document).ready(function() {
+            $('.animate__animated').each(function() {
+                var waypoint = new Waypoint({
+                    element: this,
+                    handler: function() {
+                        $(this.element).addClass('animate__fadeInUp');
+                        $(this.element).css('opacity', '1');
+                        $(this.element).css('transform', 'translateY(0)');
+                    },
+                    offset: '75&'
+                });
+            });
+        });
+
+        gsap.from(".card,.feature", {
+        duration: 1,
+        y: 50,
+        opacity: 0,
+        stagger: 0.2,
+        delay: 1,
+        ease: "power3.out",
+      });
+    </script>
+
+</body>
+
+</html>

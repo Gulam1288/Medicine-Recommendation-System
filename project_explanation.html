@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Explanation</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS for dark theme -->
+    <style>
+        body {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: justify;
+        }
+
+        h1, h2, h3 {
+            color: #ffc107;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        pre {
+            color: #ffffff;
+        }
+
+        code {
+            font-family: Consolas, "courier new";
+            padding: 2px;
+            font-size: 105%;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet" />
+    
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="mt-5 mb-4 text-center">Project Explanation</h1>
+    
+        <h2>Data Preparation</h2>
+        <p><strong>What it Does:</strong> The code reads medical information from a CSV file (`newMedData.csv`). It combines specific columns (`Description` and `Reason`) and cleans the data by removing any missing values.</p>
+        <p><strong>Why It's Important:</strong> This step ensures that the data is ready for analysis and use in the recommendation system.</p>
+    
+        <!-- Sample Code Explanation: Data Preparation -->
+        <h3>Sample Code: Data Preparation</h3>
+        <pre><code class="language-python">
+    import pandas as pd
+    
+    # Load data from CSV
+    df = pd.read_csv('newMedData.csv')
+    
+    # Drop rows with missing values
+    df.dropna(inplace=True)
+    
+    # Combine 'Description' and 'Reason' columns into 'tags'
+    df['tags'] = df['Description'] + ' ' + df['Reason']
+        </code></pre>
+    
+        <h2>Feature Extraction</h2>
+        <p><strong>What it Does:</strong> The code uses a technique called `CountVectorizer` to convert the text data (descriptions and reasons for medications) into a format that a machine learning model can understand.</p>
+        <p><strong>Why It's Important:</strong> By converting text into numerical vectors, the machine learning model can analyze and make sense of the textual data, enabling it to recommend medicines based on user symptoms.</p>
+    
+        <!-- Sample Code Explanation: Feature Extraction -->
+        <h3>Sample Code: Feature Extraction</h3>
+        <pre><code class="language-python">
+    from sklearn.feature_extraction.text import CountVectorizer
+    from nltk.stem import PorterStemmer
+    
+    # Initialize CountVectorizer and PorterStemmer
+    cv = CountVectorizer(stop_words='english', max_features=5000)
+    ps = PorterStemmer()
+    
+    # Preprocess 'tags' column
+    df['tags'] = df['tags'].apply(lambda x: ' '.join([ps.stem(word) for word in x.lower().split()]))
+        </code></pre>
+
+        <h2>Techniques/Models Used</h2>
+        <ul>
+            <li><strong>CountVectorizer:</strong> Converts text data into numerical form, which is essential for machine learning models to process.</li>
+            <li><strong>PorterStemmer:</strong> Reduces words to their base or root form, ensuring consistency in the text data.</li>
+            <li><strong>Cosine Similarity:</strong> Measures the similarity between different sets of data vectors, helping identify the most relevant medicines based on user input.</li>
+        </ul>
+    
+        <!-- Sample Code Explanation: Models Used -->
+        <h3>Sample Code: Models Used</h3>
+        <pre><code class="language-python">
+    from sklearn.feature_extraction.text import CountVectorizer
+    from nltk.stem import PorterStemmer
+    from sklearn.metrics.pairwise import cosine_similarity
+    
+    # Initialize CountVectorizer and PorterStemmer
+    cv = CountVectorizer(stop_words='english', max_features=5000)
+    ps = PorterStemmer()
+    
+    # Preprocess 'tags' column
+    df['tags'] = df['tags'].apply(lambda x: ' '.join([ps.stem(word) for word in x.lower().split()]))
+    
+    # Vectorize 'tags' column
+    vectors = cv.fit_transform(df['tags']).toarray()
+    
+    # Function to recommend medicines based on user input tags
+    def recommend_based_on_tags(user_tags):
+        user_tags = ' '.join([ps.stem(word) for word in user_tags.lower().split()])
+        user_vector = cv.transform([user_tags])
+        similarity_scores = cosine_similarity(user_vector, vectors)
+        sorted_indices = sorted(range(len(similarity_scores)), key=lambda i: similarity_scores[i], reverse=True)
+    
+        recommended_medicines = []
+        unique_medicines = set()
+    
+        for idx in sorted_indices:
+            medicine_name = df.iloc[idx]['Drug_Name']
+            treatment_info = df.iloc[idx]['Treatment']
+    
+            if medicine_name not in unique_medicines:
+                recommended_medicines.append((medicine_name, treatment_info))
+                unique_medicines.add(medicine_name)
+    
+            if len(recommended_medicines) == 4:
+                break
+    
+        return recommended_medicines
+        </code></pre>
+    
+    
+        <h2>Recommendation System</h2>
+        <p><strong>What it Does:</strong> The `recommend_based_on_tags` function computes the similarity between user-provided symptoms/tags and the preprocessed medical data vectors using a method called cosine similarity.</p>
+        <p><strong>Why It's Important:</strong> This system suggests medicines that are most similar to the symptoms or tags entered by the user, helping them find relevant treatment options.</p>
+    
+        <!-- Sample Code Explanation: Recommendation System -->
+        <h3>Sample Code: Recommendation System</h3>
+        <pre><code class="language-python">
+    from sklearn.metrics.pairwise import cosine_similarity
+    
+    def recommend_based_on_tags(user_tags):
+        # Preprocess user input tags
+        user_tags = ' '.join([ps.stem(word) for word in user_tags.lower().split()])
+    
+        # Transform user input tags into a vector using CountVectorizer
+        user_vector = cv.transform([user_tags])
+    
+        # Calculate cosine similarity between user vector and all medicine vectors
+        similarity_scores = cosine_similarity(user_vector, vectors)
+    
+        # Get indices of medicines sorted by similarity (excluding exact matches)
+        sorted_indices = sorted(range(len(similarity_scores)), key=lambda i: similarity_scores[i], reverse=True)
+    
+        recommended_medicines = []
+        unique_medicines = set()
+    
+        for idx in sorted_indices:
+            medicine_name = df.iloc[idx]['Drug_Name']
+            treatment_info = df.iloc[idx]['Treatment']
+    
+            if medicine_name not in unique_medicines:
+                recommended_medicines.append((medicine_name, treatment_info))
+                unique_medicines.add(medicine_name)
+    
+            if len(recommended_medicines) == 4:
+                break
+    
+        return recommended_medicines
+        </code></pre>
+    
+        <h2>Flask Framework</h2>
+        <p><strong>What it Does:</strong> The code uses Flask, a web framework, to create a user-friendly interface for interacting with the recommendation system.</p>
+        <p><strong>Why It's Important:</strong> Flask allows users to input symptoms and receive medication recommendations conveniently through a web browser.</p>
+    
+        <!-- Sample Code Explanation: Flask Application -->
+        <h3>Sample Code: Flask Application</h3>
+        <pre><code class="language-python">
+    from flask import Flask, render_template, request, redirect, url_for
+    
+    app = Flask(__name__)
+
+    @app.route('/')
+    def index():
+        if 'user' in session:
+            user = session['user']
+            return render_template('index.html', user=user)
+        else:
+            return redirect(url_for('login'))
+    
+    @app.route('/recommendations', methods=['POST'])
+    def recommend():
+        user_tags = request.form['user_tags']
+        recommendations = recommend_based_on_tags(user_tags)
+        return render_template('result.html', recommendations=recommendations)
+    
+    if __name__ == '__main__':
+        app.run(debug=True)
+        </code></pre>
+    
+        <h2>MySQL Database Interaction</h2>
+        <p><strong>What it Does:</strong> The application interacts with a MySQL database to store and retrieve user-related information, such as doctor credentials and user sessions.</p>
+        <p><strong>Why It's Important:</strong> This interaction enables user registration, authentication, and personalized experiences within the web application.</p>
+    
+        <!-- Sample Code Explanation: Database Interaction -->
+        <h3>Sample Code: MySQL Database Interaction</h3>
+        <pre><code class="language-python">
+    import mysql.connector
+    
+    # Connect to MySQL database
+    db = mysql.connector.connect(
+        host='localhost',
+        user='username',
+        password='password',
+        database='healthcare_db'
+    )
+    
+    # Perform database operations (e.g., querying, inserting)
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM doctors")
+    result = cursor.fetchall()
+        </code></pre>
+    
+        <h2>Conclusion</h2>
+        <p>The provided code combines machine learning techniques with web development to create a useful application for medical recommendation. It leverages text preprocessing, vectorization, and similarity computation to recommend medicines based on user symptoms. The use of Flask facilitates user interaction through a web interface, while MySQL database integration handles user registration and authentication.</p>
+        <p>This approach blends technology and healthcare to assist users in finding relevant medical information and treatment options.</p>
+    </div>
+
+<!-- Bootstrap JS (optional, for certain Bootstrap components) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
+</body>
+</html>
