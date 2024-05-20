@@ -7,6 +7,7 @@
     <title>Medicine Recommendation System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='logo.ico') }}">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -111,6 +112,10 @@
             object-fit: cover;
         }
 
+        .link-offset-3 {
+            color: #c3e7f8;
+        }
+
         .footer {
             margin-top: 80px;
             width: 100%;
@@ -164,9 +169,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
                     </li>
+                    {% if session['user'] %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -258,11 +265,11 @@
                 <div class="col-md-12 animate__animated animate__fadeInUp">
                     <h2>Understanding Personalized Medicine</h2>
                     <p class="description">
-                        Learn about the concept of <a rel="noopener" class="text-success link-offset-3" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6095726/" target="_blank">personalized medicine</a> and how it is transforming healthcare by tailoring treatment options to individual patients based on their unique characteristics and needs.
+                        Learn about the concept of <a rel="noopener" class="link-offset-3" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6095726/" target="_blank">personalized medicine</a> and how it is transforming healthcare by tailoring treatment options to individual patients based on their unique characteristics and needs.
                     </p>
                     <h2 class="mt-5">Machine Learning in Healthcare</h2>
                     <p class="description">
-                        Discover how <a rel="noopener" class="text-success link-offset-3" href="https://www.ibm.com/watson/health/ai-in-healthcare/" target="_blank">machine learning algorithms</a> are revolutionizing diagnosis, drug discovery, and patient care in the medical field, leading to more efficient and accurate healthcare solutions.
+                        Discover how <a rel="noopener" class="link-offset-3" href="https://www.ibm.com/watson/health/ai-in-healthcare/" target="_blank">machine learning algorithms</a> are revolutionizing diagnosis, drug discovery, and patient care in the medical field, leading to more efficient and accurate healthcare solutions.
                     </p>
                 </div>
             </div>

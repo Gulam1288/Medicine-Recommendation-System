@@ -1,135 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Medicine Recommender - Recommendations</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='logo.ico') }}">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: linear-gradient(
+            216deg,
+            rgba(77, 77, 77, 0.05) 0%,
+            rgba(77, 77, 77, 0.05) 25%,
+            rgba(42, 42, 42, 0.05) 25%,
+            rgba(42, 42, 42, 0.05) 38%,
+            rgba(223, 223, 223, 0.05) 38%,
+            rgba(223, 223, 223, 0.05) 75%,
+            rgba(36, 36, 36, 0.05) 75%,
+            rgba(36, 36, 36, 0.05) 100%
+          ),
+          linear-gradient(
+            44deg,
+            rgba(128, 128, 128, 0.05) 0%,
+            rgba(128, 128, 128, 0.05) 34%,
+            rgba(212, 212, 212, 0.05) 34%,
+            rgba(212, 212, 212, 0.05) 57%,
+            rgba(25, 25, 25, 0.05) 57%,
+            rgba(25, 25, 25, 0.05) 89%,
+            rgba(135, 135, 135, 0.05) 89%,
+            rgba(135, 135, 135, 0.05) 100%
+          ),
+          linear-gradient(
+            241deg,
+            rgba(55, 55, 55, 0.05) 0%,
+            rgba(55, 55, 55, 0.05) 14%,
+            rgba(209, 209, 209, 0.05) 14%,
+            rgba(209, 209, 209, 0.05) 60%,
+            rgba(245, 245, 245, 0.05) 60%,
+            rgba(245, 245, 245, 0.05) 69%,
+            rgba(164, 164, 164, 0.05) 69%,
+            rgba(164, 164, 164, 0.05) 100%
+          ),
+          linear-gradient(
+            249deg,
+            rgba(248, 248, 248, 0.05) 0%,
+            rgba(248, 248, 248, 0.05) 32%,
+            rgba(148, 148, 148, 0.05) 32%,
+            rgba(148, 148, 148, 0.05) 35%,
+            rgba(202, 202, 202, 0.05) 35%,
+            rgba(202, 202, 202, 0.05) 51%,
+            rgba(181, 181, 181, 0.05) 51%,
+            rgba(181, 181, 181, 0.05) 100%
+          ),
+          linear-gradient(92deg, rgb(18, 97, 91), rgb(18, 97, 91));
+      }
 
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            min-width: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            max-width: 80%;
-            background: black;
-            color: white;
-            border-radius: 15px;
-            padding: 40px;
-        }
+      .container {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        min-width: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        max-width: 50%;
+        background: rgba(205, 244, 242, 0.8);
+        color: rgb(18, 17, 17);
+        border-radius: 15px;
+        padding: 25px 40px 40px;
+      }
 
-        h1,
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
+      h1,
+      h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
 
-        form {
-            margin-bottom: 20px;
-        }
+      input[type="text"],
+      input[type="number"],
+      .fselect {
+        padding: 12px;
+        width: 100%;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
 
-        input[type="text"],
-        input[type="number"],
-        .fselect {
-            padding: 12px;
-            width: 100%;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+      .btn {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 5px;
+      }
 
-        .btn {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 5px;
-        }
+      .form-select {
+        padding: 12px;
+      }
 
-        .fselect {
-            background: #3b3b3b;
-            padding: 14px 12px;
+      .hero {
+        margin-top: 23px;
+      }
+
+      #symptomSuggestions {
+        width: 43%;
+        padding: 0 4px;
+      }
+
+      #symptomSuggestions option {
+        padding: 2px 8px;
+        min-width: 100%;
+      }
+
+      #symptomSuggestions option:hover {
+        cursor: pointer;
+        color: #26578b;
+      }
+
+      @media (max-width: 768px) {
+        #symptomSuggestions {
+          width: 52%;
         }
+      }
     </style>
-</head>
+  </head>
 
-<body class="bg-dark text-light" data-bs-theme="dark">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body text-light" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">KUCET</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/prescription">Prescription</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                </ul>
-            </div>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body text-light"
+      data-bs-theme="dark"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">KUCET</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="/prescription"
+                >Prescription</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register">Register</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            {% if session['user'] %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </li>
+            {% endif %}
+          </ul>
         </div>
+      </div>
     </nav>
-    <div class="my-3">
-        <center>
-            <h1 class="text-light">Personalized Medicine Recommender</h1>
-            <h2 class="text-light">Welcome, {{ user[3] }}</h2>
-        </center>
+    <div class="hero">
+      <center>
+        <h2 class="text-light">Welcome Doctor</h2>
+      </center>
     </div>
-    <div class="container my-4 mt-4">
-        <form class="form-group" action="/recommendations" method="POST">
-            <label class="fs-5 mt-2 mb-1" for="name">Name:</label>
-            <input class="form-input" type="text" id="name" name="name" placeholder="Your name" required>
+    <div class="container my-4 mt-4" id="newPatientContainer">
+      <center><h3>New Patient Details</h3></center>
+      <form class="form-group" id="patientForm" action="/recommendations" method="POST" onsubmit="resetFields('patientForm')">
+        <label class="fs-5 mt-2 mb-1" for="name">Name:</label>
+        <input
+          class="form-input"
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Your name"
+          required
+        />
 
-            <label class="fs-5 mt-2 mb-1" for="age">Age:</label>
-            <input class="form-input" type="number" id="age" name="age" placeholder="Your age" required>
+        <label class="fs-5 mt-2 mb-1" for="age">Age:</label>
+        <input
+          class="form-input"
+          type="number"
+          id="age"
+          name="age"
+          placeholder="Your age"
+          required
+        />
 
-            <label class="fs-5 mt-2 mb-1" for="gender">Gender:</label>
-            <select class="fselect" id="gender" name="gender" required>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-            </select>
+        <label class="fs-5 mt-2 mb-1" for="gender">Gender:</label>
+        <select class="form-select mb-2" id="gender" name="gender" required>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
 
-            <label class="fs-5 mt-2 mb-1" for="user_tags">Enter your symptoms:</label>
-            <input class="form-input" type="text" id="user_tags" name="user_tags" placeholder="e.g., trauma, pain" required>
+        <label class="fs-5 mt-2 mb-1" for="user_tags">Enter symptoms:</label>
+        <input
+          type="text"
+          id="user_tags"
+          name="user_tags"
+          class="form-input"
+          placeholder="e.g., Fever, Back Pain"
+          required
+        />
+        <datalist id="symptomSuggestions"></datalist>
 
-            <button type="submit" class="btn btn-danger btn-lg mt-4">Get Recommendations</button>
-        </form>
+        <button type="submit" class="btn btn-dark btn-lg mt-4">
+          Get Recommendations
+        </button>
+        <button
+          type="button"
+          class="btn btn-success btn-lg mt-2"
+          onclick="togglePatientContainer(false);"
+        >
+          Old Patient
+        </button>
+      </form>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
 
+    <div class="container my-4 mt-4" id="oldPatientContainer">
+      <center><h3>Search Old Patient Using Prescription ID</h3></center>
+      <form class="form-group" id="searchForm" action="/display_prescription" method="get" onsubmit="resetFields('searchForm')">
+        <label class="fs-5 mt-3 mb-1" for="prescriptionId">Enter Prescription ID(s) (separate multiple IDs with commas):</label>
+        <input
+            type="text"
+            id="prescriptionId"
+            name="prescription_id"
+            class="form-input"
+            required
+        />
+        <button type="submit" class="btn btn-dark btn-lg mt-4">Search</button>
+        <button type="button" class="btn btn-success btn-lg mt-2" onclick="togglePatientContainer(true);">New Patient</button>
+    </form>
+    
+    </div>
+    {% if message %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      symptomSuggestions = document.getElementById("symptomSuggestions");
+
+      $(document).ready(function () {
+        // Event listener for input change
+        $("#user_tags").on("input", function () {
+          var input = $(this).val().trim();
+          // Check if input is empty or hasn't changed
+          if (!input) {
+            hideSuggestions();
+            return;
+          }
+          fetchSuggestions(input);
+        });
+
+        // Event listener for selecting option from datalist
+        $("#symptomSuggestions").on("click", "option", function () {
+          var selectedOption = $(this).text(); // Get the text of the selected option
+          $("#user_tags").val(selectedOption); // Set input field value to selected option
+          $("#symptomSuggestions").empty(); // Clear datalist
+          symptomSuggestions.style.display = "none";
+        });
+
+        // Event listener for input field losing focus
+        $("#user_tags").on("focusout", function () {
+          setTimeout(() => {
+            hideSuggestions(); // Hide datalist when input loses focus
+          }, 500);
+        });
+
+        function fetchSuggestions(input) {
+          $.ajax({
+            type: "POST",
+            url: "/autocomplete",
+            data: { input: input },
+            success: function (response) {
+              console.log("Response:", response); // Log response data
+              $("#symptomSuggestions").empty();
+              if (response.length > 0) {
+                // If there are suggestions, display them
+                displaySuggestions(response);
+              } else {
+                hideSuggestions(); // If no suggestions, hide the datalist
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("Error:", xhr.responseText); // Log any errors
+            },
+          });
+        }
+
+        function displaySuggestions(suggestions) {
+          symptomSuggestions.style.display = "block";
+          symptomSuggestions.style.background = "rgba(205, 244, 242, 1)";
+          symptomSuggestions.style.color = "black";
+          symptomSuggestions.style.position = "absolute";
+          symptomSuggestions.style.zIndex = "555";
+          symptomSuggestions.style.marginTop = "-5px";
+          symptomSuggestions.style.border = "2px solid #FFF";
+          symptomSuggestions.style.borderBottomLeftRadius = "10px";
+          symptomSuggestions.style.borderBottomRightRadius = "10px";
+          symptomSuggestions.style.height = "auto";
+          symptomSuggestions.style.maxHeight = "100px";
+          symptomSuggestions.style.overflow = "auto";
+          // Append suggestions to the datalist
+          suggestions.forEach(function (suggestion) {
+            console.log("Appending suggestion:", suggestion); // Log each suggestion
+            $("#symptomSuggestions").append(
+              '<option value="' + suggestion + '">' + suggestion + "</option>"
+            );
+          });
+        }
+
+        function hideSuggestions() {
+          $("#symptomSuggestions").empty(); // Clear datalist
+          symptomSuggestions.style.display = "none"; // Hide datalist
+        }
+      });
+
+      // Function to toggle between new and old patient containers
+      function togglePatientContainer(isNewPatient) {
+        if (isNewPatient) {
+          document.getElementById("oldPatientContainer").style.display = "none";
+          document.getElementById("newPatientContainer").style.display = "flex";
+          resetFormFields("searchForm");
+        } else {
+          document.getElementById("newPatientContainer").style.display = "none";
+          document.getElementById("oldPatientContainer").style.display = "flex";
+          resetFormFields("patientForm");
+        }
+      }
+
+      function resetFields(id) {
+        setTimeout(() => {
+          document.getElementById(id).reset();
+        }, 1500);
+      }
+
+      function resetFormFields(id) {
+        document.getElementById(id).reset();
+      }
+
+      togglePatientContainer(true);
+    </script>
+  </body>
 </html>

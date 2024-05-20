@@ -1,0 +1,185 @@
+<div class="hero">
+      <center>
+        <h2 class="text-light">Welcome Doctor</h2>
+      </center>
+    </div>
+    <div class="container my-4 mt-4" id="newPatientContainer">
+      <center><h3>New Patient Details</h3></center>
+      <form class="form-group" action="/recommendations" method="POST">
+        <label class="fs-5 mt-2 mb-1" for="name">Name:</label>
+        <input
+          class="form-input"
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Your name"
+          required
+        />
+
+        <label class="fs-5 mt-2 mb-1" for="age">Age:</label>
+        <input
+          class="form-input"
+          type="number"
+          id="age"
+          name="age"
+          placeholder="Your age"
+          required
+        />
+
+        <label class="fs-5 mt-2 mb-1" for="gender">Gender:</label>
+        <select class="form-select mb-2" id="gender" name="gender" required>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label class="fs-5 mt-2 mb-1" for="user_tags">Enter symptoms:</label>
+        <input
+          type="text"
+          id="user_tags"
+          name="user_tags"
+          class="form-control"
+          placeholder="e.g., trauma, pain"
+          required
+        />
+        <datalist id="symptomSuggestions"></datalist>
+
+        <button type="submit" class="btn btn-primary btn-lg mt-4">
+          Get Recommendations
+        </button>
+        <button
+          type="button"
+          class="btn btn-success btn-lg mt-2"
+          onclick="togglePatientContainer(false);"
+        >
+          Old Patient
+        </button>
+      </form>
+    </div>
+
+    <div class="container my-4 mt-4" id="oldPatientContainer">
+      <center><h3>Search Old Patient Using Prescription ID</h3></center>
+      <form class="form-group" action="/display_prescription" method="get">
+        <label class="fs-5 mt-3 mb-1" for="prescriptionId"
+          >Enter Prescription ID:</label
+        >
+        <input
+          type="text"
+          id="prescriptionId"
+          name="prescription_id"
+          class="form-input"
+          required
+        />
+        <button type="submit" class="btn btn-primary btn-lg mt-4">
+          Search
+        </button>
+        <button
+          type="button"
+          class="btn btn-success btn-lg mt-2"
+          onclick="togglePatientContainer(true);"
+        >
+          New Patient
+        </button>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      symptomSuggestions = document.getElementById("symptomSuggestions");
+
+      $(document).ready(function () {
+        // Event listener for input change
+        $("#user_tags").on("input", function () {
+          var input = $(this).val().trim();
+          // Check if input is empty or hasn't changed
+          if (!input) {
+            hideSuggestions();
+            return;
+          }
+          fetchSuggestions(input);
+        });
+
+        // Event listener for selecting option from datalist
+        $("#symptomSuggestions").on("click", "option", function () {
+          var selectedOption = $(this).text(); // Get the text of the selected option
+          $("#user_tags").val(selectedOption); // Set input field value to selected option
+          $("#symptomSuggestions").empty(); // Clear datalist
+          symptomSuggestions.style.display = "none";
+        });
+
+        // Event listener for input field losing focus
+        $("#user_tags").on("focusout", function () {
+          setTimeout(() => {
+            hideSuggestions(); // Hide datalist when input loses focus
+          }, 500);
+        });
+
+        function fetchSuggestions(input) {
+          $.ajax({
+            type: "POST",
+            url: "/autocomplete",
+            data: { input: input },
+            success: function (response) {
+              console.log("Response:", response); // Log response data
+              $("#symptomSuggestions").empty();
+              if (response.length > 0) {
+                // If there are suggestions, display them
+                displaySuggestions(response);
+              } else {
+                hideSuggestions(); // If no suggestions, hide the datalist
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("Error:", xhr.responseText); // Log any errors
+            },
+          });
+        }
+
+        function displaySuggestions(suggestions) {
+          symptomSuggestions.style.display = "block";
+          symptomSuggestions.style.background = "rgba(205, 244, 242, 1)";
+          symptomSuggestions.style.color = "black";
+          symptomSuggestions.style.position = "sticky";
+          symptomSuggestions.style.zIndex = "555";
+          symptomSuggestions.style.marginTop = "-5px";
+          symptomSuggestions.style.border = "2px solid #FFF";
+          symptomSuggestions.style.borderBottomLeftRadius = "10px";
+          symptomSuggestions.style.borderBottomRightRadius = "10px";
+          symptomSuggestions.style.height = "auto";
+          symptomSuggestions.style.maxHeight = "100px";
+          symptomSuggestions.style.overflow = "auto";
+          // Append suggestions to the datalist
+          suggestions.forEach(function (suggestion) {
+            console.log("Appending suggestion:", suggestion); // Log each suggestion
+            $("#symptomSuggestions").append(
+              '<option value="' + suggestion + '">' + suggestion + "</option>"
+            );
+          });
+        }
+
+        function hideSuggestions() {
+          $("#symptomSuggestions").empty(); // Clear datalist
+          symptomSuggestions.style.display = "none"; // Hide datalist
+        }
+      });
+
+      // Function to toggle between new and old patient containers
+      function togglePatientContainer(isNewPatient) {
+        if (isNewPatient) {
+          document.getElementById("oldPatientContainer").style.display = "none";
+          document.getElementById("newPatientContainer").style.display = "flex";
+        } else {
+          document.getElementById("newPatientContainer").style.display = "none";
+          document.getElementById("oldPatientContainer").style.display = "flex";
+        }
+      }
+
+      togglePatientContainer(true);
+    </script>
+  </body>
+</html>
