@@ -219,7 +219,7 @@ Open XAMPP Control Panel and start the Apache and MySQL servers.
 
 2. Install the required Python packages:
     ```sh
-    pip install flask pandas sklearn nltk mysql-connector-python
+    pip install flask pandas scikit-learn nltk mysql-connector-python
     ```
 
 3. Start the Flask server:
