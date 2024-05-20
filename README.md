@@ -1,4 +1,4 @@
-Instructions on how to set up the database using XAMPP and run the Flask server:
+Explanation on project and instructions on how to set up the database using XAMPP and run the Flask server:
 
 ```markdown
 # Project Explanation
@@ -211,7 +211,7 @@ Open XAMPP Control Panel and start the Apache and MySQL servers.
 ### 3. Import the Database
 
 1. Open [phpMyAdmin](http://localhost/phpmyadmin).
-2. Import the `health_db.sql` file into the `healthcare_db` php databases to get database and the tables required.
+2. Import the `health_db.sql` file in phpmyadmin databases to get database and the tables required.
 
 ### 4. Set Up the Flask Application
 
