@@ -13,7 +13,7 @@ This step ensures that the data is ready for analysis and use in the recommendat
 
 ### Sample Code: Data Preparation
 
-```python
+```
 import pandas as pd
 
 # Load data from CSV
