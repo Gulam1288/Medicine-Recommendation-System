@@ -1,6 +1,5 @@
 Explanation on project and instructions on how to set up the database using XAMPP and run the Flask server:
 
-```markdown
 # Project Explanation
 
 ## Data Preparation
@@ -13,7 +12,7 @@ This step ensures that the data is ready for analysis and use in the recommendat
 
 ### Sample Code: Data Preparation
 
-```
+```python
 import pandas as pd
 
 # Load data from CSV
